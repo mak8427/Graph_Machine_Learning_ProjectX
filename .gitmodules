@@ -1,0 +1,3 @@
+[submodule "hik"]
+	path = hik
+	url = https://github.com/jutanke/hik.git
