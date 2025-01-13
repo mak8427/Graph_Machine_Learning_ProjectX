@@ -37,8 +37,8 @@ $$
 L_v = \|v'_{T+1:T+N} - v_{T+1:T+N}\|_2
 $$
 
-- \(v'_{T+1:T+N}\): Velocity of the predicted motion sequence.
-- \(v_{T+1:T+N}\): Velocity of the ground truth sequence.
+- $$ \(v'_{T+1:T+N}\): $$  Velocity of the predicted motion sequence.
+- $$ \(v_{T+1:T+N}\): $$ Velocity of the ground truth sequence.
 
 #### Combined Loss Function
 The overall loss used during training combines both reconstruction and velocity losses:
