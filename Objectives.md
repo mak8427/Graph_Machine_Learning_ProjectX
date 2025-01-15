@@ -13,7 +13,8 @@
 ### Are there new papers?
 - Back to MLP: A Simple Baseline for Human Motion Prediction: https://arxiv.org/pdf/2207.01567
 
----
+---Dynamic Multiscale Graph Neural Networks for
+3D Skeleton-Based Human Motion Prediction https://arxiv.org/pdf/2003.08802
 
 ### What losses should we use and how to evaluate the model (Davide)
 
