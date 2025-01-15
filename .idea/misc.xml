@@ -3,5 +3,8 @@
   <component name="Black">
     <option name="sdkName" value="C:\ProgramData\miniconda3" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="C:\ProgramData\miniconda3" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="All" project-jdk-type="Python SDK" />
+  <component name="PyCharmDSProjectLayout">
+    <option name="id" value="JupyterRightHiddenStructureLayout" />
+  </component>
 </project>
