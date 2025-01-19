@@ -1,0 +1,15 @@
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 319/319 [00:04<00:00, 66.28it/s]
+Epoch 1/50, Train Loss: 0.0772, Val F1: 0.0179
+Epoch 2/50, Train Loss: 0.0502, Val F1: 0.0214
+Epoch 3/50, Train Loss: 0.0454, Val F1: 0.0320
+Epoch 4/50, Train Loss: 0.0432, Val F1: 0.0415
+Epoch 5/50, Train Loss: 0.0420, Val F1: 0.0539
+Epoch 6/50, Train Loss: 0.0411, Val F1: 0.0643
+Epoch 7/50, Train Loss: 0.0402, Val F1: 0.0627
+Epoch 8/50, Train Loss: 0.0395, Val F1: 0.0755
+Epoch 9/50, Train Loss: 0.0386, Val F1: 0.0796
+Epoch 10/50, Train Loss: 0.0380, Val F1: 0.0712
+Epoch 11/50, Train Loss: 0.0376, Val F1: 0.0747
+Epoch 12/50, Train Loss: 0.0369, Val F1: 0.0798
+Epoch 13/50, Train Loss: 0.0362, Val F1: 0.0819
+Epoch 14/50, Train Loss: 0.0360, Val F1: 0.0976

@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/kd/Documents/graphml/Graph_Machine_Learning_ProjectX/train.py", line 28, in <module>
+    dataset = HiKDataset(dataset_name, data_location, config["sample_length"], config["step_size"])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kd/Documents/graphml/Graph_Machine_Learning_ProjectX/data_prep.py", line 11, in __init__
+    self.scene = Scene.load_from_paths(
+                 ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kd/anaconda3/lib/python3.12/site-packages/hik/data/scene.py", line 27, in load_from_paths
+    kitchen = Kitchen.load_for_dataset(dataset=dataset, data_location=scene_path)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/kd/anaconda3/lib/python3.12/site-packages/hik/data/kitchen.py", line 762, in load_for_dataset
+    assert isdir(data_location), data_location
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: /path/to/hik/data/scenes/A_scene

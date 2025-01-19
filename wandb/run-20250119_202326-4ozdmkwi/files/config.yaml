@@ -1,0 +1,48 @@
+_wandb:
+    value:
+        cli_version: 0.19.4
+        m: []
+        python_version: 3.12.4
+        t:
+            "1":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 53
+                - 55
+                - 77
+            "2":
+                - 1
+                - 5
+                - 11
+                - 49
+                - 53
+                - 55
+                - 77
+            "3":
+                - 23
+                - 55
+            "4": 3.12.4
+            "5": 0.19.4
+            "6": 4.45.2
+            "8":
+                - 5
+            "12": 0.19.4
+            "13": linux-x86_64
+batch_size:
+    value: 128
+epochs:
+    value: 50
+hidden_dim:
+    value: 128
+input_dim:
+    value: 3
+lr:
+    value: 0.001
+num_heads:
+    value: 4
+sample_length:
+    value: 30
+step_size:
+    value: 30
