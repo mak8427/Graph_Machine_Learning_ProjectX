@@ -10,7 +10,7 @@ class GCN(torch.nn.Module):
         self.fc = torch.nn.Linear(hidden_dim, output_dim)
 
     def forward(self, data):
-        x, edge_index, batch = data.x, data.edge_index, data.batch
+        x, edge_index, num_nodes, batch = data.x, data.edge_index, data.num_nodes, data.batch
 
         x = self.conv1(x, edge_index)
         x = torch.relu(x)

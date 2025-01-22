@@ -1,48 +1,46 @@
 import torch
-from torch.utils.data import random_split
-from torch_geometric.loader import DataLoader
+from torch_geometric.nn import DataParallel  # <-- use PyG DataParallel
 from sklearn.metrics import f1_score
 import wandb
-from data_prep import HiKDataset, GraphDataset
+from data_prep import generate_dataloaders
 from models import GraphTransformer
+import os
 
-# Initialize Weights & Biases
-wandb.init(project="graph-transformer-training")
+# Initialize WandB
+wandb.init(project="graph-transformer-training", entity="kaisar-dauletbek")
 
 # Configuration
 config = {
     "batch_size": 128,
-    "hidden_dim": 128,
+    "hidden_dim": 256,
     "input_dim": 3,
-    "sample_length": 30,
-    "step_size": 30,
-    "num_heads": 4,
+    "num_heads": 16,
     "lr": 0.001,
-    "epochs": 50
+    "epochs": 100,
+    "model_save_path": "best_model.pth"
 }
 wandb.config.update(config)
 
-# Data Preparation
-data_location = "data"
-dataset_name = "A"
-dataset = HiKDataset(dataset_name, data_location, config["sample_length"], config["step_size"])
-graph_dataset = GraphDataset(dataset)
 
-train_size = int(0.8 * len(graph_dataset))
-val_size = int(0.1 * len(graph_dataset))
-test_size = len(graph_dataset) - train_size - val_size
+# dataset_name = "A"
 
-train_dataset, val_dataset, test_dataset = random_split(graph_dataset, [train_size, val_size, test_size])
-
-train_loader = DataLoader(train_dataset, batch_size=config["batch_size"], shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=config["batch_size"], shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=config["batch_size"], shuffle=False)
+# Load dataset and create dataloaders
+graph_dataset, train_loader, val_loader, test_loader = generate_dataloaders(config["batch_size"])
 
 # Model Setup
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 output_dim = graph_dataset[0].y.size(1)
-model = GraphTransformer(config["input_dim"], config["hidden_dim"], output_dim, config["num_heads"]).to(device)
+
+model = GraphTransformer(
+    config["input_dim"],
+    config["hidden_dim"],
+    output_dim,
+    config["num_heads"]
+).to(device)
+
+# Optimizer, Scheduler
 optimizer = torch.optim.AdamW(model.parameters(), lr=config["lr"])
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config["epochs"], eta_min=1e-6)
 loss_fn = torch.nn.BCEWithLogitsLoss()
 
 # Training Function
@@ -50,7 +48,7 @@ def train(model, loader, optimizer, loss_fn):
     model.train()
     total_loss = 0
     for batch in loader:
-        batch = batch.to(device)
+        batch = batch.to(device)  # <-- Move entire batch to the correct device
         optimizer.zero_grad()
         out = model(batch)
         loss = loss_fn(out, batch.y.float())
@@ -66,7 +64,7 @@ def evaluate(model, loader):
     all_labels = []
     with torch.no_grad():
         for batch in loader:
-            batch = batch.to(device)
+            batch = batch.to(device)  # <-- Move entire batch to the correct device
             out = model(batch)
             preds = (torch.sigmoid(out) > 0.5).float()
             all_preds.append(preds.cpu())
@@ -78,18 +76,38 @@ def evaluate(model, loader):
     f1 = f1_score(all_labels, all_preds, average="macro", zero_division=0)
     return f1
 
-# Training Loop
-epochs = config["epochs"]
-for epoch in range(epochs):
+
+# Training Loop (same as before, but without DataParallel checks)
+best_val_f1 = 0.0
+for epoch in range(config["epochs"]):
     train_loss = train(model, train_loader, optimizer, loss_fn)
     val_f1 = evaluate(model, val_loader)
 
-    # Log metrics to wandb
-    wandb.log({"train_loss": train_loss, "val_f1": val_f1})
+    # Save best model
+    if val_f1 > best_val_f1:
+        best_val_f1 = val_f1
+        torch.save(model.state_dict(), config["model_save_path"])
+        print(f"Best model saved with F1: {best_val_f1:.4f}")
 
-    print(f"Epoch {epoch + 1}/{epochs}, Train Loss: {train_loss:.4f}, Val F1: {val_f1:.4f}")
+    scheduler.step()
 
-# Testing
+    # WandB logging
+    wandb.log({
+        "train_loss": train_loss,
+        "val_f1": val_f1,
+        "best_val_f1": best_val_f1,
+        "learning_rate": scheduler.get_last_lr()[0]
+    })
+
+    print(f"Epoch {epoch+1}/{config['epochs']} "
+          f"| Train Loss: {train_loss:.4f} "
+          f"| Val F1: {val_f1:.4f} "
+          f"| LR: {scheduler.get_last_lr()[0]:.6f}")
+
+# Load best model and test
+model.load_state_dict(torch.load(config["model_save_path"]))
+model = model.to(device)
+
 test_f1 = evaluate(model, test_loader)
 wandb.log({"test_f1": test_f1})
 print(f"Test F1 Score: {test_f1:.4f}")

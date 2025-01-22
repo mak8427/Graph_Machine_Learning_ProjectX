@@ -1,0 +1,7 @@
+No difference between spatial and temporal edges. No class balancing.
+transformer 200 epochs, 256 hidden size, 16 num_heads, dataset A -- Test F1 Score: 0.3775
+transformer 200 epochs, 256 hidden size, 16 num_heads, dataset A, lr scheduler -- Test F1 Score: 0.3737
+
+Adding feature normalization across batch. Using cosine scheduler.
+tansformer 200 epochs, 256 hidden size, 16 num_heads, dataset A -- 
+
