@@ -1,0 +1,7 @@
+{"time":"2025-01-19T20:24:12.936264329+01:00","level":"INFO","msg":"stream: starting","core version":"0.19.4","symlink path":"/home/kd/Documents/graphml/Graph_Machine_Learning_ProjectX/wandb/run-20250119_202412-kife14bb/logs/debug-core.log"}
+{"time":"2025-01-19T20:24:13.039171976+01:00","level":"INFO","msg":"created new stream","id":"kife14bb"}
+{"time":"2025-01-19T20:24:13.039198615+01:00","level":"INFO","msg":"stream: started","id":"kife14bb"}
+{"time":"2025-01-19T20:24:13.039242495+01:00","level":"INFO","msg":"writer: Do: started","stream_id":"kife14bb"}
+{"time":"2025-01-19T20:24:13.039262335+01:00","level":"INFO","msg":"sender: started","stream_id":"kife14bb"}
+{"time":"2025-01-19T20:24:13.039263925+01:00","level":"INFO","msg":"handler: started","stream_id":"kife14bb"}
+{"time":"2025-01-19T20:24:13.35648564+01:00","level":"INFO","msg":"Starting system monitor"}
