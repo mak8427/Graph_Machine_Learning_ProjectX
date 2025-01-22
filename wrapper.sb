@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH --time=23:59:00
+#SBATCH --mail-user=ritzert@informatik.uni-goettingen.de 
+#SBATCH --mail-type=FAIL
+#SBATCH --output=slurm-out/%j.out
+
+date
+hostname
+pwd
+
+curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba
+eval "$(./bin/micromamba shell hook -s posix)"
+micromamba activate graphlearning
+
+cd $SLURM_SUBMIT_DIR
+pwd
+
+echo $@
+eval $@
+
+
+echo "All done in sbatch."
+date
