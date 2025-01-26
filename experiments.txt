@@ -46,3 +46,8 @@ config = {
 }
 Test F1 Score: 0.2489 
 Test Multi Class acc: 0.6012
+
+
+Need to train:
+1. GCN (undersampling, maybe 2-step)
+2. Transformer (undersampling, maybe 2-step)
