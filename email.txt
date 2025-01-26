@@ -1,0 +1,100 @@
+
+Hi,
+
+sure: To get the dataset working, install https://github.com/jutanke/hik and do the following
+
+from
+ hik.data.scene import
+ Scene
+
+
+dataset =
+"A" 
+# A, B, C, D
+
+sample_length = 30 # frames
+
+
+
+scene = Scene.load_from_paths(
+
+dataset,
+
+data_location + 
+"/poses/",
+
+data_location + 
+"/scenes/",
+
+data_location + 
+"/body_models/",
+
+)
+
+
+
+splits = 
+scene.get_splits(
+
+sample_length,
+
+stepsize=sample_length,
+
+)
+
+
+
+# Splits looks like this:
+
+"poses3d": poses3d, 
+# n_seq x n_frames x n_person x 29 x 3
+
+"smpls": smpls, 
+# n_seq x n_frames x n_person x 21 x 3|4
+
+"transforms": transforms, 
+# n_seq x n_frames x n_person x 3+(3|4)
+
+"masks": masks, 
+# n_seq x n_frames n_person
+
+"activities": acts, 
+# n_seq x n_frames x n_person x 82
+
+"start_frames":
+ start_frames, # n_seq 
+
+
+from einops 
+import rearrange
+
+
+
+poses = rearrange(splits["poses3d"],
+"n_seq n_frames n_person n_joints n_xyz -> (n_seq n_person) n_frames n_xyz n_joints")
+
+masks = rearrange(splits["masks"],
+"n_seq n_frames n_person -> (n_seq n_person) n_frames")
+
+activities = rearrange(splits["activities"],
+"n_seq n_frames n_person n_activities -> (n_seq n_person) n_frames n_activities")
+
+
+HiK contains three recording, A, B, C, D. To start, just load on one recording, e.g. A. You only need poses, masks and activities and we transform them to be single person. It is important that you filter pose sequences that are empty (n_person is around 16, but usually there are only 2-3 people in the scene). Just use the mask array to drop all pose sequences where at least one frame is missing (e.g. not all (masks[sequence_idx]), you might need to convert to bool first). Also downsample the framerate by e.g. taking every 6th frame (reducing 1s/30frames of input to 5 frames). You can play around with the length of sequences and frame rates if you want to.
+
+To build a graph from pose sequences: We connect each key point with its spatial neighbors (e.g. the elbow with wrist and shoulder) and temporal neighbors (i.e. the same key point in the previous and next frame). See https://github.com/jutanke/hik/tree/main for how the 29 keypoint locations map to the body. We want to do graph classification, i.e. based on the X frame sequence, we want to predict the activity label of the center frame. See https://github.com/jutanke/hik/blob/7feadcda026dc1329acaa6035a6399fcd0328a27/hik/data/constants.py#L179 for the activity labels.
+
+Some additional information:
+- The dataset is heavily imbalanced in terms of action classes. Perform some downsampling of frequent action classes that you find suitable and exclude very infrequent classes. You can also mix datasets A, B, C, and D and change the stepsize parameter to get more samples
+- The action labels are multi-label
+- To make things easier, you can first build a model to distinguish between pose types (a subset of action classes that are always present and mutually exclusive) before extending it to more action classes. The pose types are: kneeling, kneeling_down, leaning, leaning_down, sitting, sitting_down, squatting, standing, standing_up, steps, walking
+- Look for some papers that do skeletal action recognition using graph learning and look at their approach
+
+I am not sure what you mean with HIM dataset, do you mean HiK?
+
+Message me if you have any further questions!
+
+Best,
+
+Felix
+

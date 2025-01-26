@@ -1,0 +1,48 @@
+{
+  "os": "Linux-6.9.3-76060903-generic-x86_64-with-glibc2.35",
+  "python": "CPython 3.12.4",
+  "startedAt": "2025-01-19T19:24:12.933583Z",
+  "program": "/home/kd/Documents/graphml/Graph_Machine_Learning_ProjectX/train.py",
+  "codePath": "train.py",
+  "git": {
+    "remote": "git@github.com:mak8427/Graph_Machine_Learning_ProjectX.git",
+    "commit": "2b6aa52e6041092009078b49de8dc2b4d848ee54"
+  },
+  "email": "kaisar.dauletbek4@gmail.com",
+  "root": "/home/kd/Documents/graphml/Graph_Machine_Learning_ProjectX",
+  "host": "pop-os",
+  "executable": "/home/kd/anaconda3/bin/python",
+  "codePathLocal": "train.py",
+  "cpu_count": 16,
+  "cpu_count_logical": 32,
+  "gpu": "NVIDIA GeForce RTX 4060 Ti",
+  "gpu_count": 2,
+  "disk": {
+    "/": {
+      "total": "973837025280",
+      "used": "460728410112"
+    }
+  },
+  "memory": {
+    "total": "67339845632"
+  },
+  "cpu": {
+    "count": 16,
+    "countLogical": 32
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 4060 Ti",
+      "memoryTotal": "17175674880",
+      "cudaCores": 4352,
+      "architecture": "Ada"
+    },
+    {
+      "name": "NVIDIA GeForce RTX 4060 Ti",
+      "memoryTotal": "17175674880",
+      "cudaCores": 4352,
+      "architecture": "Ada"
+    }
+  ],
+  "cudaVersion": "12.6"
+}
