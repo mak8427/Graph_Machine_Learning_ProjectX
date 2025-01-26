@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn import GCNConv, global_mean_pool
+from torch_geometric.nn import GCNConv, global_mean_pool, GATConv
 from torch_geometric.nn import TransformerConv
 import torch.nn.functional as F
 import torch.nn as nn
@@ -34,7 +34,7 @@ class GraphTransformer(torch.nn.Module):
         self.fc = torch.nn.Linear(hidden_dim * num_heads, output_dim)
 
     def forward(self, data):
-        x, edge_index, batch = data.x, data.edge_index, data.batch
+        x, edge_index, edge_attr, batch = data.x, data.edge_index, data.edge_attr, data.batch
 
         x = self.conv1(x, edge_index)
         x = torch.relu(x)
@@ -125,4 +125,24 @@ class GINE(torch.nn.Module):
 
         # final linear layer for graph-level output
         x = self.linear(x)
+        return x
+
+
+# GAT model
+class GAT(torch.nn.Module):
+    def __init__(self, in_channels, out_channels, hidden_channels, num_layers, heads, dropout, edge_dim, add_self_loops):
+        super(GAT, self).__init__()
+        self.num_layers = num_layers
+        self.convs = torch.nn.ModuleList()
+        self.convs.append(GATConv(in_channels, hidden_channels, heads, dropout=dropout, edge_dim=edge_dim, add_self_loops=add_self_loops))
+        for _ in range(num_layers - 1):
+            self.convs.append(GATConv(hidden_channels * heads, hidden_channels, heads, dropout=dropout, edge_dim=edge_dim, add_self_loops=add_self_loops))
+        self.lin = torch.nn.Linear(hidden_channels * heads, out_channels)
+
+    def forward(self, x, edge_index, edge_attr, batch):
+        for i in range(self.num_layers):
+            x = self.convs[i](x, edge_index, edge_attr)
+            x = F.elu(x)
+        x = global_mean_pool(x, batch)
+        x = self.lin(x)
         return x

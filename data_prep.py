@@ -313,20 +313,20 @@ def generate_dataloaders(batch_size):
     # graph_dataset = GraphDataset(hik_dataset, body_edges)
     # graph_dataset = GraphDataset(body_edges)
     graph_dataset = torch.load('data_processed/graphs.pt')
-    graph_dataset = graph_dataset[int(len(graph_dataset) * 0.2):]
+    # graph_dataset = graph_dataset[int(len(graph_dataset) * 0.2):]
 
-    # # undersample the dataset by throwing away 50% of the entries with label 58 and 61 present
-    # filtered_graph_dataset = []
-    # for data in graph_dataset:
-    #     if data.y[0][58] or data.y[0][61]:
-    #         # print(data.y[0][58], data.y[0][61])
-    #         if np.random.rand() < 0.5:
-    #             continue
-    #     filtered_graph_dataset.append(data)
+    # undersample the dataset by throwing away 50% of the entries with label 58 and 61 present
+    filtered_graph_dataset = []
+    for data in graph_dataset:
+        if data.y[0][58] or data.y[0][61]:
+            # print(data.y[0][58], data.y[0][61])
+            if np.random.rand() < 0.5:
+                continue
+        filtered_graph_dataset.append(data)
 
-    # print(f"Filtered dataset size: {len(filtered_graph_dataset)}")
+    print(f"Filtered dataset size: {len(filtered_graph_dataset)}")
 
-    # graph_dataset = filtered_graph_dataset
+    graph_dataset = filtered_graph_dataset
     train_size = int(0.8 * len(graph_dataset))
     val_size = int(0.1 * len(graph_dataset))
     test_size = len(graph_dataset) - train_size - val_size
