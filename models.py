@@ -13,7 +13,7 @@ class GCN(torch.nn.Module):
         self.fc = torch.nn.Linear(hidden_dim, output_dim)
 
     def forward(self, data):
-        x, edge_index, num_nodes, batch = data.x, data.edge_index, data.num_nodes, data.batch
+        x, edge_index, edge_attr, batch = data.x, data.edge_index, data.edge_attr, data.batch
 
         x = self.conv1(x, edge_index)
         x = torch.relu(x)
@@ -22,6 +22,7 @@ class GCN(torch.nn.Module):
 
         x = global_mean_pool(x, batch)
         x = self.fc(x)
+        # x = F.log_softmax(x, dim=1)
 
         return x
 
@@ -43,7 +44,7 @@ class GraphTransformer(torch.nn.Module):
 
         x = global_mean_pool(x, batch)
         x = self.fc(x)
-
+        # x = F.log_softmax(x, dim=1)
         return x
     
 

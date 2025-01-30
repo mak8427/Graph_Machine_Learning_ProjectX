@@ -3,13 +3,13 @@ from torch_geometric.nn import DataParallel  # <-- use PyG DataParallel
 from sklearn.metrics import f1_score
 import wandb
 from data_prep import generate_dataloaders
-from models import GraphTransformer
+from models import GCN
 from focal_loss.focal_loss import FocalLoss
 from tqdm import tqdm  # Import tqdm for progress bars
 import os
 
 # Initialize WandB
-wandb.init(project="graph-transformer-training", entity="kaisar-dauletbek")
+wandb.init(project="gcn-training", entity="kaisar-dauletbek")
 
 # Configuration
 config = {
@@ -19,7 +19,7 @@ config = {
     "num_heads": 4,
     "lr": 0.001,
     "epochs": 100,
-    "model_save_path": "best_transformer_model.pth"
+    "model_save_path": "best_gcn_model.pth"
 }
 wandb.config.update(config)
 
@@ -41,19 +41,19 @@ print(class_weights.sum())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 output_dim = graph_dataset[0].y.size(1)
 
-model = GraphTransformer(
+model = GCN(
     config["input_dim"],
     config["hidden_dim"],
-    output_dim,
-    config["num_heads"]
+    output_dim
 ).to(device)
 
 # Optimizer, Scheduler
 optimizer = torch.optim.AdamW(model.parameters(), lr=config["lr"])
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config["epochs"], eta_min=1e-6)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="max", factor=0.5, patience=5, min_lr=1e-6)
 # loss_fn = torch.nn.BCEWithLogitsLoss()
 # loss_fn = FocalLoss(gamma=2)
-loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights.to(device))
+# loss_fn = torch.nn.CrossEntropyLoss(weight=class_weights.to(device))
+loss_fn = torch.nn.CrossEntropyLoss()
 
 # Training Function
 def train(model, loader, optimizer, loss_fn):
@@ -108,7 +108,7 @@ for epoch in range(config["epochs"]):
         torch.save(model.state_dict(), config["model_save_path"])
         print(f"Best model saved with F1: {best_val_f1:.4f}")
 
-    scheduler.step()
+    scheduler.step(val_f1)
 
     # WandB logging
     wandb.log({
